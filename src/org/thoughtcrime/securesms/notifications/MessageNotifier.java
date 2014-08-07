@@ -24,6 +24,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -178,7 +179,7 @@ public class MessageNotifier {
       builder.addAction(R.drawable.check, context.getString(R.string.MessageNotifier_mark_as_read),
           notificationState.getMarkAsReadIntent(context, masterSecret));
 
-//      //Android Wear specific part
+     //Android Wear specific part
       NotificationCompat.WearableExtender extender = new NotificationCompat.WearableExtender();
 
       RemoteInput remoteInput = new RemoteInput.Builder("quick_reply")
@@ -186,24 +187,23 @@ public class MessageNotifier {
           .setChoices(context.getResources().getStringArray(R.array.wear_quick_reply_choices))
           .build();
 
-      NotificationCompat.Action actionQuickReply = new NotificationCompat.Action.Builder(
-          R.drawable.ic_action_reply,
+      extender.addAction(new NotificationCompat.Action.Builder(
+          R.drawable.ic_full_reply,
           context.getString(R.string.MessageNotifier_reply),
           notificationState.getQuickRespondIntent(context, masterSecret))
           .addRemoteInput(remoteInput)
-          .build();
-
-      extender.addAction(actionQuickReply);
+          .build());
 
       if (notifications.size() > 1) {
 
         SpannableStringBuilder conversationHistoryBuilder = new SpannableStringBuilder();
-        for (NotificationItem notification : notifications) {
+        for (int i = notifications.size() - 1; i >= 0; i--) {
+          NotificationItem notification = notifications.get(i);
           int oldLength = conversationHistoryBuilder.length();
           String name = notification.getIndividualRecipient().getName();
 
           conversationHistoryBuilder.append(name);
-          conversationHistoryBuilder.setSpan(new StyleSpan(android.graphics.Typeface.BOLD),
+          conversationHistoryBuilder.setSpan(new StyleSpan(Typeface.BOLD),
               oldLength, oldLength + name.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
           conversationHistoryBuilder.append("\n");
           conversationHistoryBuilder.append(notification.getText());
@@ -224,7 +224,8 @@ public class MessageNotifier {
 
     SpannableStringBuilder content = new SpannableStringBuilder();
 
-    for (NotificationItem item : notifications) {
+    for (int i = notifications.size() - 1; i >= 0; i--) {
+      NotificationItem item = notifications.get(i);
       content.append(item.getBigStyleSummary());
       content.append('\n');
     }
