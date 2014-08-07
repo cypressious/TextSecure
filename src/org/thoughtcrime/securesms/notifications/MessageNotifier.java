@@ -195,7 +195,7 @@ public class MessageNotifier {
           .build());
 
       extender.addAction(new NotificationCompat.Action.Builder(
-          R.drawable.check,
+          R.drawable.check_wear,
           context.getString(R.string.MessageNotifier_mark_as_read),
           notificationState.getMarkAsReadIntent(context, masterSecret))
           .build());
